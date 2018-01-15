@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="description" content=""/>
+	<meta name="viewport" content="width=device-width" />
+	<title>XXXXXXX</title>
+	<!-- FONT AWESOME -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.3/js/all.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	
+	<canvas id="draw"></canvas>
+
+
+<script>
+	// Récupération du noeud
+	const canvas = document.querySelector('#draw');
+	// définition du cntet (2D ou 3D)
+	const ctx = canvas.getContext('2d');
+
+	// Nouvelle côtes pour canvas : prendre tout l'espace possible
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+
+	// couleur de la ligne
+	ctx.strokeStyle = '#BADA55';
+	// stylel du croisement des lignes
+	ctx.lineJoin = 'round'; //'square'
+	// style début et fin de la ligne
+	ctx.lineCap = 'round';
+	ctx.lineWidth = 10;
+
+
+	// false pour parametre le tracer au clic.
+	let isDrawing = false;
+
+	// variables récupérants les coordonnées de la souris
+	let lastX = 0;
+	let lastY = 0;
+
+	let hue = 0;
+	let epaisseur = true;
+
+	function draw(event)
+	{
+		if(!isDrawing) return; //arrêt de la fonction si le bouton de la souris n'est pas enfoncé.
+		// console.log(event);
+
+		// Modification couleur ligne
+		// http://mothereffinghsl.com/ site H(hue) = couleur du spectre, S  = saturation, L = lumière
+		ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+
+		// initialisation du chemin
+		ctx.beginPath();
+		// start form O
+		ctx.moveTo(lastX, lastY);
+		// Go to 
+		ctx.lineTo(event.offsetX, event.offsetY);
+		//display la ligne.
+		ctx.stroke();
+
+		// redéfinition des points en fonction d'où se trouve la souris
+		[lastX, lastY] = [event.offsetX, event.offsetY]
+
+		// Faire bouger le Hue pur modifier la couleur
+		if (hue > 360) {
+			hue = 0
+		}
+		hue++;
+		// console.log(hue);
+
+		// Jouer avec l'éaisseur du trait.
+		// Fifouterie drapeau : en fonction de la valeur on affiche un drapeau (true or false) ...
+		if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+			epaisseur = !epaisseur;
+		}
+
+		// ... selon la 'couleur' du drapeau, on incrémente ou décrémente.
+		if (epaisseur) {
+			ctx.lineWidth++;				
+		} else {
+			ctx.lineWidth--;
+		}
+	}
+
+	// si le clic gaauche est enfoncé, isDrawind devient true
+	canvas.addEventListener('mousedown', (event) => {
+		isDrawing = true;
+		// redéfinition des coordonées de l souris au clic
+		[lastX, lastY] = [event.offsetX, event.offsetY]
+		});
+	// écoute si la souris mouge
+	canvas.addEventListener('mousemove', draw);
+	// si bouton gahe non enfoncé ou la souris sort, isDrawing = false.
+	canvas.addEventListener('mouseup', () => isDrawing = false);
+	canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
+
+
+</script>
+
+</body>
+
+</html>

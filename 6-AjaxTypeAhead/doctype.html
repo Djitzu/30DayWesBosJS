@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="description" content=""/>
+	<meta name="viewport" content="width=device-width" />
+	<title>Type Ahead</title>
+	<!-- FONT AWESOME -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.3/js/all.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+<script>
+	
+
+
+
+	const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+// 1 Extraire les villes et les états d'une ressources externes. 
+
+	// Création d'une const stockant un tableau de ville
+	const cities = [];
+
+	// fetch(aller chercher/extraction) renvoit une promesse
+	fetch(endpoint)
+		// on transforme cette promesse en Binary Large OBject puis on le formate en JSON
+		.then(blob => blob.json())
+		// enfin, les infos formatées sont stockées dans la const après avoir utilisé spread(...) afin de ne pas nicher un tableau dans un autre.
+		.then(data => cities.push(...data));
+
+// 2 Création d'une fonction findMatches.
+
+	// Elle a deux paramètres : ce que tapera l'utilisateur et notre tableau de ville
+	function findMatches(wordToMatch, cities)
+	{
+		// elle doit renvoyer un tableau filtrer avec uniquement les ocurences correspondantes au souhait de l'utilisateur
+		return cities.filter(place =>
+		{
+			// Pour nous faciliter la tâche, on utilise le constructeur de JS RegExp (objet). Il permet la reconnaissance de d'un modèle de texte. Premier parametre : ce que tapera l'utilisateur ; deuxième, l'expression réguliere voulu. 'g' = global 'i' = insensible à la casse.
+			const regex = new RegExp(wordToMatch, 'gi');
+			// le filter doit retourner un tableau dont les valeurs correspondent aux clefs : .city ou .state.
+			// jsMethod : match
+			return place.city.match(regex) || place.state.match(regex);
+		})
+	}
+
+// 3 Création d'une fonction pour afficher.
+
+	// bonus formatage
+	function numberWithCommas(x) 
+	{
+ 		 return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+	
+	function displayMatches()
+	{
+		// Notre fonction appellera la fonction de rechercher et stockera son contenu dans matchArray = tableau
+		const matchArray = findMatches(this.value, cities);
+		// la const html modifiera le DOM en fonction des résultats.
+		// on va utiliser la méthode map pour créer un nouveau tableau : pour chaque élément de matchArray correspondant à city ou state ou poulation, génére un li contenant ces infos \o/
+		const html = matchArray.map(place => {
+
+			// Bonus coloriser les termes correspondant à ce qui a été tapé.
+			// Une nouvelle regex
+			const regex = new RegExp(this.value, 'gi');
+			// une nouvelle const va accueillir le retour de la méthode replace() : elle permet de remplacer une chaine de caractere par une autre en fonction d'un parametre(ici, une regex et du html).
+			const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+			const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+
+
+			return `
+			<li>
+				<span class="name">${cityName}, ${stateName}</span>
+				<span class="population">${numberWithCommas(place.population)}</span>
+			</li>
+			`;
+		// On passe le tout à la méthode join qui permet de réunir chaque élément d'un tableau en chaine de caractères. le champs vide signifiant : n'utilise pas de séparateur.
+		}).join('');
+		// js ajoute les nouvelles li à l'ul sélectionné par le querySelector via innerHTML
+		suggestions.innerHTML = html;
+	}
+
+	// querySelector
+	var searchInput = document.querySelector('.search');
+	var suggestions = document.querySelector('.suggestions');
+
+	// code principal
+	searchInput.addEventListener('keyup', displayMatches);
+
+// 
+
+</script>
+	
+
+
+
+</body>
+</html>

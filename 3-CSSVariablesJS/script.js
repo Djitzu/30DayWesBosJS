@@ -4,9 +4,9 @@ const inputs = document.querySelectorAll('section input');
 
 function upDate()
 {
-	//récupération de l'unité de mesure grâc à notre data-sizing.
+	//récupération de l'unité de mesure grâce à notre data-sizing.
 	const suffixe = this.dataset.sizing || '';
-	//Redéfinition des varaibles dans la balise html. Elles s'appliqueront partout selon le principe de cascade.
+	//Redéfinition des variables dans la balise html. Elles s'appliqueront partout selon le principe de cascade.
 	document.documentElement.style.setProperty(`--${this.name}`, this.value + suffixe);
 	//console.log(this.name);
 
