@@ -33,48 +33,46 @@
     // 1. Filter the list of inventors for those who were born in the 1500's
 
     const fifteen = inventors.filter(inventor => inventor.year > 1499 && inventor.year < 1600);
-
-    // console.table(fifteen);
+    // console.table(fifteen);   
 
 
     // Array.prototype.map()
     // 2. Give us an array of the inventors' first and last names
 
     const inventorId = inventors.map(inventor => inventor.first + ' ' + inventor.last);
-    // console.table(inventorId)
+    // console.table(inventorId);
 
 
 
     // Array.prototype.sort()
     // 3. Sort the inventors by birthdate, oldest to youngest
 
-    const oldest = inventors.sort((firstOne, nextOne) => firstOne.year > nextOne.year ? 1 : -1);
-
+    const oldest = inventors.sort((a, b) => a.year > b.year ? 1 : -1);
     // console.table(oldest);
-
  
 
     // Array.prototype.reduce()
     // 4. How many years did all the inventors live?
 
-    const lived = inventors.reduce((total, yearLived) => {
-      return total + (yearLived.passed - yearLived.year);
-    }, 0)
+    const totalYearLived = inventors.reduce((total, age) => 
+    {
+      return total + (age.passed - age.year);
+    },0)
 
-    // console.log(lived);
+
+    // console.log(totalYearLived);
 
     // 5. Sort the inventors by years lived
 
     // 1 connaitre l'age de chaque inventeur
     // 2 classer ordre croissant.
 
-
-    const oldToYoung = inventors.sort((a, b) => 
+    const oldToYoung = inventors.sort((a, b) =>
     {
-      const firstOne = a.passed - a.year;
-      const nextOne = b.passed - b.year;
+      const isYounger = a.passed - a.year;
+      const isOlder = b.passed - b.year;
 
-      return firstOne > nextOne ? 1 : -1;
+      return isYounger > isOlder ? 1 : -1;
     })
 
     // console.log(oldToYoung)
@@ -87,32 +85,36 @@
     // 7. sort Exercise
     // Sort the people alphabetically by last name
 
-    const alpha = people.sort((a,b) =>
+    const alpha = people.sort((firstOne, nextOne) =>
     {
-      const aToArray = a.split(', ');
-      const bToArray = b.split(', ');
+      // const firstOneId = firstOne.split(', ');
+      // const nextOneId = nextOne.split(', ');
+      // return firstOneId[0] > nextOneId[0] ? 1 : -1;
 
-      return aToArray[0] > bToArray[0] ? 1 : -1;
+      const [aLast, aFirst] = firstOne.split(', ');
+      const [bLast, bFirst] = nextOne.split(', ');
+      return aLast > bLast ? 1 : -1;
+      
     })
+
 
     // console.log(alpha);
     
-
-  
-
-    // console.log(alphaSort)
-
     // 8. Reduce Exercise
     // Sum up the instances of each of these
-    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck' ];
+    const data = ['car', 'car', 'truck', 'truck', 'bike', 'walk', 'car', 'van', 'bike', 'walk', 'car', 'van', 'car', 'truck', 'pogostick'];
 
-    const sumUp = data.reduce((tally, item) => {
-      tally[item] = (tally[item] || 0) + 1
-      return tally
-    }, [])
+    const sumUp = data.reduce((tally, item) =>
+    {
+      if(!tally[item]) {
+        tally[item] = 0;
+      }
 
-    console.log(sumUp);
+      tally[item]++;
+      return tally;
+    },[])
 
+    console.table(sumUp);
 
   </script>
 </body>
